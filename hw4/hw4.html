@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>Homework 4</title>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <h1 style = "text-align: center; font-size: 150%; margin-top: 10%;">Enter URL for Trucking List JSON File</h1>
+        <div style = "text-align: center; margin: 5%;"><input type = "text" id = "TEXTBOX" value = "truckinglist.json"/></div>
+        <div style = "text-align: center;"><button id = "BUTTON" onclick = "onBUTTONclick()">Submit Query</button></div>
+        <p id = "demo"></p>
+        <script type = "text/javascript">
+            var html_text = "";
+            var textbox = document.getElementById("TEXTBOX");
+            var button = document.getElementById("BUTTON");
+            var demo = document.getElementById("demo");
+            function onBUTTONclick(){
+                var content = {};
+                var company_info = false;
+                var url =  textbox.value;
+                if(url == "" || url.replace(/ /g,"") == ""){
+                    alert("Empty Input.");
+                    return;
+                }
+                var jsonDoc = loadJSON(url);
+                if(jsonDoc == null){
+                    alert("No Such File.");
+                    return;
+                }
+                html_text += "<html><head><style>img {width: 100%;}</style><title>Top Trucking Companies</title><meta charset='UTF-8'/></head><body><table border='1'>";
+                try{
+                    var jsonObj = JSON.parse(jsonDoc);
+                }
+                catch(err){
+                    alert("Corrupted File.\nError Infomation: " + err.message);
+                    return;
+                }
+                for(var key in jsonObj["Mainline"]["Table"]){
+                    if(key == "Header"){
+                        html_text += "<tr>";
+                        for(var header in jsonObj["Mainline"]["Table"]["Header"]["Data"]){
+                        html_text += "<td>" + jsonObj["Mainline"]["Table"]["Header"]["Data"][header] + "</td>";
+                        }
+                        html_text += "</tr>";
+                    }
+                    else if(key == "Row"){
+                        company_info = true;
+                        for(var row in jsonObj["Mainline"]["Table"]["Row"]){
+                            for(var data in jsonObj["Mainline"]["Table"]["Row"][row]){
+                                content[data] = jsonObj["Mainline"]["Table"]["Row"][row][data];
+                            }
+                            html_text += "<tr><td>" + content["Company"] + "</td><td>"+ content["Services"] + "</td><td>";
+                            var cnt = 0;
+                            for (var hub in content["Hubs"]["Hub"]){
+                                if (cnt == 0){
+                                    html_text += "<ul><li><b>" + content["Hubs"]["Hub"][hub] + "</b></li>";
+                                    cnt += 1;
+                                }
+                                else{
+                                    html_text += "<li>" + content["Hubs"]["Hub"][hub] + "</li>";
+                                    cnt += 1;
+                                }
+                            }
+                            html_text += "</ul></td><td>" + content["Revenue"] + "</td><td><a href = '"+ content["HomePage"] + "'>" + content["HomePage"] + "</a></td><td><img src = '" + content["Logo"] + "'/></td></tr>";  
+                        }
+                    }
+                }
+                if(!company_info){
+                    alert("No Company Infomation in JSON File.");
+                    content = {};
+                    html_text = "";
+                    return;
+                }
+                content = {};
+                html_text += "</table></body></html>";
+                var hWin = window.open("", "Error", "height=800,width=1200");
+                hWin.document.write(html_text);
+                html_text = "";
+            }
+            function loadJSON(url){
+                var xmlhttp=new XMLHttpRequest();
+                xmlhttp.open("GET",url,false);
+                if (xmlhttp == null){
+                    alert("Connection Failed.");
+                    return null;
+                }
+                try{
+                    xmlhttp.send();
+                }
+                catch(err){
+                    return null;
+                }
+                var jsonDoc = xmlhttp.responseText;
+                return jsonDoc;
+            }
+        </script>
+    </body>
+</html>
