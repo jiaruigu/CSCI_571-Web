@@ -137,17 +137,16 @@ h2 {
     opacity:0.25;
 }
 .parallax1 {
-    width: 700px;
     height: 55%;
-    background-image: url("http://cs-server.usc.edu:45678/hw/hw3/images/image6.jpg" );
+    background-image: url("images/image6.jpg" );
     background-attachment: fixed;
-    background-position: -180px 40px;
+    background-position: center;
     background-repeat: no-repeat;
     background-clip: content-box;
     overflow: hidden;
 }
 .parallax2 {
-    background-image: url("http://cs-server.usc.edu:45678/hw/hw3/images/image5.jpg" );
+    background-image: url("images/image5.jpg" );
     height: 55%; 
     background-attachment: fixed;
     background-position: center;
